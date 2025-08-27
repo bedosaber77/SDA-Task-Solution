@@ -10,4 +10,15 @@ const generateToken = (user) => {
   );
 };
 
-module.exports = generateToken;
+const validateToken = (token) => {
+  try {
+    return jwt.verify(token, process.env.JWT_SECRET);
+  } catch (e) {
+    return null;
+  }
+};
+
+module.exports = {
+  generateToken,
+  validateToken,
+};
