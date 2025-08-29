@@ -3,3 +3,5 @@
 */node_modules/*
 node_modules/
 .env
+front/public/vite.svg
+front/src/assets/react.svg
