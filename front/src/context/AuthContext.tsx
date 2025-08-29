@@ -1,8 +1,17 @@
-import { createContext, useState, useContext, type ReactNode } from "react";
+/* eslint-disable react-refresh/only-export-components */
+import {
+  createContext,
+  useState,
+  useContext,
+  type ReactNode,
+  useEffect,
+} from "react";
+import api from "../api/axios";
 
 export interface AuthContextType {
-  token: string | null;
-  login: (token: string) => void;
+  isAuthenticated: boolean;
+  isLoading: boolean; // Add isLoading
+  login: () => void;
   logout: () => void;
 }
 
@@ -11,21 +20,39 @@ export const AuthContext = createContext<AuthContextType | undefined>(
 );
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [token, setToken] = useState<string | null>(
-    localStorage.getItem("token") ?? null
-  );
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true); // Start in a loading state
 
-  const login = (newToken: string) => {
-    setToken(newToken);
-    localStorage.setItem("token", newToken);
+  useEffect(() => {
+    const verifyUser = async () => {
+      try {
+        // The cookie is sent automatically by the browser
+        const response = await api.get("/auth/verify");
+        if (response.status === 200) {
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+        }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (error) {
+        setIsAuthenticated(false);
+      } finally {
+        setIsLoading(false); // End loading state
+      }
+    };
+    verifyUser();
+  }, []);
+
+  const login = () => {
+    setIsAuthenticated(true);
   };
 
   const logout = () => {
-    setToken(null);
-    localStorage.removeItem("token");
+    // You should also have a backend call here to invalidate the cookie
+    setIsAuthenticated(false);
   };
 
-  const providerValue = { token, login, logout };
+  const providerValue = { isAuthenticated, isLoading, login, logout };
 
   return (
     <AuthContext.Provider value={providerValue}>
