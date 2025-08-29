@@ -12,9 +12,9 @@ module.exports.getAllProjects = async (req, res) => {
 
 module.exports.createProject = async (req, res) => {
   try {
-    const { name, description } = req.body;
+    const { title, description } = req.body;
     const newProject = new project({
-      name,
+      title,
       description,
     });
     await newProject.save();
@@ -44,10 +44,10 @@ module.exports.getProjectById = async (req, res) => {
 module.exports.updateProject = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description } = req.body;
+    const { title, description } = req.body;
     const updatedProject = await project.findByIdAndUpdate(
       id,
-      { name, description },
+      { title, description },
       { new: true }
     );
     if (!updatedProject) {

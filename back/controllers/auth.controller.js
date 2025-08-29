@@ -17,9 +17,12 @@ exports.register = async (req, res) => {
       password: hashedPassword,
     });
     await newUser.save();
-    return res
-      .status(201)
-      .json({ message: "User created successfully", user: newUser });
+    const token = generateToken(newUser);
+    return res.status(201).json({
+      message: "User created successfully",
+      user: { id: newUser._id, username: newUser.username },
+      token,
+    });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ message: "Server error" });

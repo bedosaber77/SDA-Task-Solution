@@ -12,6 +12,8 @@ app.use(cors(cors.options));
 app.use(express.json());
 app.use("/api/auth", require("./routes/auth.route.js"));
 app.use("/api/project", require("./routes/project.route.js"));
+app.use("/api/task", require("./routes/task.route.js"));
+
 DB.connectDB();
 
 app.listen(3000, () => {
